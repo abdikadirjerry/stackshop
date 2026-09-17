@@ -6,6 +6,8 @@ import "./Products.css";
 function Products() {
   const [products, setProducts] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
+  const [selectedCategory, setSelectedCategory] = useState("all");
+  const [sortOption, setSortOption] = useState("default");
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState("");
 
@@ -28,8 +30,42 @@ function Products() {
     loadProducts();
   }, []);
 
-  const filteredProducts = products.filter((product) =>
-    product.title.toLowerCase().includes(searchTerm.toLowerCase()),
+  const categories = [
+    "all",
+    ...new Set(products.map((product) => product.category)),
+  ];
+
+  let filteredProducts = products.filter((product) => {
+    const matchesSearch = product.title
+      .toLowerCase()
+      .includes(searchTerm.toLowerCase());
+
+    const matchesCategory =
+      selectedCategory === "all" || product.category === selectedCategory;
+
+    return matchesSearch && matchesCategory;
+  });
+
+  filteredProducts = [...filteredProducts].sort(
+    (firstProduct, secondProduct) => {
+      if (sortOption === "price-low") {
+        return firstProduct.price - secondProduct.price;
+      }
+
+      if (sortOption === "price-high") {
+        return secondProduct.price - firstProduct.price;
+      }
+
+      if (sortOption === "rating") {
+        return secondProduct.rating - firstProduct.rating;
+      }
+
+      if (sortOption === "name") {
+        return firstProduct.title.localeCompare(secondProduct.title);
+      }
+
+      return 0;
+    },
   );
 
   return (
@@ -55,6 +91,40 @@ function Products() {
               value={searchTerm}
               onChange={(event) => setSearchTerm(event.target.value)}
             />
+          </div>
+
+          <div className="products-filters">
+            <div className="filter-group">
+              <label htmlFor="category-filter">Category</label>
+
+              <select
+                id="category-filter"
+                value={selectedCategory}
+                onChange={(event) => setSelectedCategory(event.target.value)}
+              >
+                {categories.map((category) => (
+                  <option key={category} value={category}>
+                    {category === "all" ? "All categories" : category}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            <div className="filter-group">
+              <label htmlFor="sort-products">Sort by</label>
+
+              <select
+                id="sort-products"
+                value={sortOption}
+                onChange={(event) => setSortOption(event.target.value)}
+              >
+                <option value="default">Recommended</option>
+                <option value="price-low">Price: Low to High</option>
+                <option value="price-high">Price: High to Low</option>
+                <option value="rating">Highest Rated</option>
+                <option value="name">Name: A to Z</option>
+              </select>
+            </div>
           </div>
         </div>
       </section>
@@ -87,7 +157,7 @@ function Products() {
           {!isLoading && !error && filteredProducts.length === 0 && (
             <div className="products-state">
               <h2>No products found.</h2>
-              <p>Try searching for a different product.</p>
+              <p>Try changing your search or filters.</p>
             </div>
           )}
 
