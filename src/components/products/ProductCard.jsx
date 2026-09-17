@@ -1,7 +1,14 @@
 import { Link } from "react-router-dom";
+import { useCart } from "../../context/CartContext";
 import "./ProductCard.css";
 
 function ProductCard({ product }) {
+  const { addToCart } = useCart();
+
+  function handleAddToCart() {
+    addToCart(product);
+  }
+
   return (
     <article className="product-card">
       <Link to={`/products/${product.id}`} className="product-card-image-link">
@@ -45,6 +52,7 @@ function ProductCard({ product }) {
             type="button"
             className="product-card-cart-button"
             aria-label={`Add ${product.title} to cart`}
+            onClick={handleAddToCart}
           >
             +
           </button>

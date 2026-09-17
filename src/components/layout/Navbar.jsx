@@ -1,12 +1,15 @@
-import { Link, NavLink } from "react-router-dom";
+import { NavLink, Link } from "react-router-dom";
+import { useCart } from "../../context/CartContext";
 import "./Navbar.css";
 
 function Navbar() {
+  const { cartCount } = useCart();
+
   return (
     <header className="navbar">
       <div className="navbar-container">
         <Link to="/" className="navbar-logo">
-          Stack<span>Shop</span>
+          StackShop
         </Link>
 
         <nav className="navbar-links">
@@ -45,17 +48,15 @@ function Navbar() {
 
           <Link to="/cart" className="navbar-cart">
             Cart
-            <span className="cart-count">0</span>
+            <span className="navbar-cart-count">{cartCount}</span>
           </Link>
 
           <button
             type="button"
-            className="mobile-menu-button"
+            className="navbar-menu-button"
             aria-label="Open navigation menu"
           >
-            <span></span>
-            <span></span>
-            <span></span>
+            ☰
           </button>
         </div>
       </div>
