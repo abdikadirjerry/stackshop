@@ -50,6 +50,10 @@ function CartProvider({ children }) {
     );
   }
 
+  function clearCart() {
+    setCartItems([]);
+  }
+
   function increaseQuantity(productId) {
     setCartItems((currentItems) =>
       currentItems.map((item) =>
@@ -92,6 +96,7 @@ function CartProvider({ children }) {
     cartMessage,
     addToCart,
     removeFromCart,
+    clearCart,
     increaseQuantity,
     decreaseQuantity,
   };

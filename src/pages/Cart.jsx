@@ -9,6 +9,7 @@ function Cart() {
     increaseQuantity,
     decreaseQuantity,
     removeFromCart,
+    clearCart,
   } = useCart();
 
   if (cartItems.length === 0) {
@@ -17,7 +18,9 @@ function Cart() {
         <div className="section-container">
           <div className="cart-empty">
             <p className="cart-label">YOUR CART</p>
+
             <h1>Your cart is empty.</h1>
+
             <p>
               You haven't added any products to your cart yet. Explore our
               collection and find something you like.
@@ -41,9 +44,20 @@ function Cart() {
             <h1>Shopping cart.</h1>
           </div>
 
-          <p className="cart-item-count">
-            {cartItems.length} {cartItems.length === 1 ? "product" : "products"}
-          </p>
+          <div className="cart-header-actions">
+            <p className="cart-item-count">
+              {cartItems.length}{" "}
+              {cartItems.length === 1 ? "product" : "products"}
+            </p>
+
+            <button
+              type="button"
+              className="clear-cart-button"
+              onClick={clearCart}
+            >
+              Clear cart
+            </button>
+          </div>
         </div>
 
         <div className="cart-layout">
