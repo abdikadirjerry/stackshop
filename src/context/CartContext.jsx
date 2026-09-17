@@ -10,21 +10,28 @@ function CartProvider({ children }) {
       const existingItem = currentItems.find((item) => item.id === product.id);
 
       if (existingItem) {
+        const newQuantity = Math.min(
+          existingItem.quantity + quantity,
+          product.stock,
+        );
+
         return currentItems.map((item) =>
           item.id === product.id
             ? {
                 ...item,
-                quantity: item.quantity + quantity,
+                quantity: newQuantity,
               }
             : item,
         );
       }
 
+      const safeQuantity = Math.min(quantity, product.stock);
+
       return [
         ...currentItems,
         {
           ...product,
-          quantity,
+          quantity: safeQuantity,
         },
       ];
     });
