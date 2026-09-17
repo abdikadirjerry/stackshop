@@ -68,6 +68,15 @@ function Products() {
     },
   );
 
+  const hasActiveFilters =
+    searchTerm !== "" || selectedCategory !== "all" || sortOption !== "default";
+
+  function clearFilters() {
+    setSearchTerm("");
+    setSelectedCategory("all");
+    setSortOption("default");
+  }
+
   return (
     <main className="products-page">
       <section className="products-header">
@@ -126,6 +135,16 @@ function Products() {
               </select>
             </div>
           </div>
+
+          {hasActiveFilters && (
+            <button
+              type="button"
+              className="clear-filters-button"
+              onClick={clearFilters}
+            >
+              Clear filters
+            </button>
+          )}
         </div>
       </section>
 
@@ -158,6 +177,16 @@ function Products() {
             <div className="products-state">
               <h2>No products found.</h2>
               <p>Try changing your search or filters.</p>
+
+              {hasActiveFilters && (
+                <button
+                  type="button"
+                  className="empty-state-clear-button"
+                  onClick={clearFilters}
+                >
+                  Clear filters
+                </button>
+              )}
             </div>
           )}
 
