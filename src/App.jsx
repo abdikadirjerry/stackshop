@@ -1,10 +1,24 @@
+import { BrowserRouter, Route, Routes } from "react-router-dom";
+import Navbar from "./components/layout/Navbar";
+import Home from "./pages/Home";
+import Products from "./pages/Products";
+import Wishlist from "./pages/Wishlist";
+import Cart from "./pages/Cart";
+
 function App() {
   return (
-    <div className="app">
-      <main>
-        <h1>StackShop</h1>
-      </main>
-    </div>
+    <BrowserRouter>
+      <div className="app">
+        <Navbar />
+
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/products" element={<Products />} />
+          <Route path="/wishlist" element={<Wishlist />} />
+          <Route path="/cart" element={<Cart />} />
+        </Routes>
+      </div>
+    </BrowserRouter>
   );
 }
 

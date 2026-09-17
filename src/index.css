@@ -59,3 +59,11 @@ ol {
 #root {
   min-height: 100vh;
 }
+
+.app {
+  min-height: 100vh;
+}
+
+main {
+  min-height: calc(100vh - 76px);
+}
