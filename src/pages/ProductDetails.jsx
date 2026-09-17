@@ -1,10 +1,12 @@
 import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import { getProductById } from "../services/productService";
+import { useCart } from "../context/CartContext";
 import "./ProductDetails.css";
 
 function ProductDetails() {
   const { productId } = useParams();
+  const { addToCart } = useCart();
 
   const [product, setProduct] = useState(null);
   const [selectedImage, setSelectedImage] = useState("");
@@ -22,6 +24,7 @@ function ProductDetails() {
 
         setProduct(productData);
         setSelectedImage(productData.images?.[0] || productData.thumbnail);
+        setQuantity(1);
       } catch (error) {
         setError("Unable to load this product. Please try again.");
       } finally {
@@ -40,6 +43,10 @@ function ProductDetails() {
 
   function decreaseQuantity() {
     setQuantity((currentQuantity) => Math.max(1, currentQuantity - 1));
+  }
+
+  function handleAddToCart() {
+    addToCart(product, quantity);
   }
 
   if (isLoading) {
@@ -179,6 +186,7 @@ function ProductDetails() {
               <button
                 type="button"
                 className="add-to-cart-button"
+                onClick={handleAddToCart}
                 disabled={product.stock === 0}
               >
                 Add to cart
