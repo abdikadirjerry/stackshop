@@ -67,3 +67,28 @@ ol {
 main {
   min-height: calc(100vh - 76px);
 }
+
+.cart-notification {
+  position: fixed;
+  top: 92px;
+  right: 24px;
+  z-index: 200;
+  max-width: 320px;
+  border: 1px solid #d4d4d4;
+  border-radius: 10px;
+  padding: 14px 18px;
+  background-color: #ffffff;
+  color: #171717;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+  font-size: 14px;
+  font-weight: 600;
+}
+
+@media (max-width: 500px) {
+  .cart-notification {
+    top: 80px;
+    right: 16px;
+    left: 16px;
+    max-width: none;
+  }
+}
