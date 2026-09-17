@@ -59,6 +59,7 @@ function ProductDetails() {
         <div className="product-details-state error-state">
           <h1>Product not found.</h1>
           <p>{error || "This product is no longer available."}</p>
+
           <Link to="/products" className="back-to-products-button">
             Back to products
           </Link>
@@ -66,6 +67,8 @@ function ProductDetails() {
       </main>
     );
   }
+
+  const totalPrice = product.price * quantity;
 
   return (
     <main className="product-details-page">
@@ -180,6 +183,78 @@ function ProductDetails() {
               >
                 Add to cart
               </button>
+            </div>
+
+            <div className="purchase-summary">
+              <div>
+                <span>Unit price</span>
+                <strong>${product.price.toFixed(2)}</strong>
+              </div>
+
+              <div>
+                <span>Quantity</span>
+                <strong>{quantity}</strong>
+              </div>
+
+              <div className="purchase-total">
+                <span>Total</span>
+                <strong>${totalPrice.toFixed(2)}</strong>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section className="product-extra-information">
+          <div className="product-extra-card">
+            <span className="product-extra-icon">✓</span>
+            <div>
+              <h3>Secure shopping</h3>
+              <p>Your order information is protected.</p>
+            </div>
+          </div>
+
+          <div className="product-extra-card">
+            <span className="product-extra-icon">↗</span>
+            <div>
+              <h3>Fast delivery</h3>
+              <p>{product.shippingInformation}</p>
+            </div>
+          </div>
+
+          <div className="product-extra-card">
+            <span className="product-extra-icon">↩</span>
+            <div>
+              <h3>Easy returns</h3>
+              <p>{product.returnPolicy}</p>
+            </div>
+          </div>
+        </section>
+
+        <section className="product-specifications">
+          <div className="product-specifications-header">
+            <p className="section-label">PRODUCT INFORMATION</p>
+            <h2>Specifications</h2>
+          </div>
+
+          <div className="specifications-grid">
+            <div>
+              <span>SKU</span>
+              <strong>{product.sku}</strong>
+            </div>
+
+            <div>
+              <span>Weight</span>
+              <strong>{product.weight} g</strong>
+            </div>
+
+            <div>
+              <span>Minimum order</span>
+              <strong>{product.minimumOrderQuantity}</strong>
+            </div>
+
+            <div>
+              <span>Warranty</span>
+              <strong>{product.warrantyInformation}</strong>
             </div>
           </div>
         </section>
