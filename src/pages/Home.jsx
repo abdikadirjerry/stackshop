@@ -1,4 +1,5 @@
 import SectionContainer from "../components/common/SectionContainer";
+import FeaturedProducts from "../components/products/FeaturedProducts";
 import "./Home.css";
 
 const categories = [
@@ -87,11 +88,7 @@ function Home() {
 
           <div className="categories-grid">
             {categories.map((category) => (
-              <a
-                href="/products"
-                className="category-card"
-                key={category.name}
-              >
+              <a href="/products" className="category-card" key={category.name}>
                 <span className="category-number">{category.icon}</span>
 
                 <div className="category-content">
@@ -105,6 +102,8 @@ function Home() {
           </div>
         </SectionContainer>
       </section>
+
+      <FeaturedProducts />
     </main>
   );
 }
