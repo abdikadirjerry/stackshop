@@ -1,18 +1,35 @@
 import { createContext, useContext, useEffect, useState } from "react";
 
+const CART_STORAGE_KEY = "stackshop-cart";
+
 const CartContext = createContext();
 
 function CartProvider({ children }) {
   const [cartItems, setCartItems] = useState(() => {
-    const savedCart = localStorage.getItem("stackshop-cart");
+    try {
+      const savedCart = localStorage.getItem(CART_STORAGE_KEY);
 
-    return savedCart ? JSON.parse(savedCart) : [];
+      if (!savedCart) {
+        return [];
+      }
+
+      const parsedCart = JSON.parse(savedCart);
+
+      return Array.isArray(parsedCart) ? parsedCart : [];
+    } catch (error) {
+      localStorage.removeItem(CART_STORAGE_KEY);
+      return [];
+    }
   });
 
   const [cartMessage, setCartMessage] = useState("");
 
   useEffect(() => {
-    localStorage.setItem("stackshop-cart", JSON.stringify(cartItems));
+    try {
+      localStorage.setItem(CART_STORAGE_KEY, JSON.stringify(cartItems));
+    } catch (error) {
+      console.error("Unable to save cart:", error);
+    }
   }, [cartItems]);
 
   function addToCart(product, quantity = 1) {
