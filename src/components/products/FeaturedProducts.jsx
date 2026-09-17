@@ -1,30 +1,29 @@
+import { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 import SectionContainer from "../common/SectionContainer";
-
-const products = [
-  {
-    id: 1,
-    name: "Minimal Wireless Headphones",
-    category: "Audio",
-    price: "$89.00",
-    badge: "Popular",
-  },
-  {
-    id: 2,
-    name: "Everyday Canvas Backpack",
-    category: "Bags",
-    price: "$64.00",
-    badge: "New",
-  },
-  {
-    id: 3,
-    name: "Classic Everyday Watch",
-    category: "Accessories",
-    price: "$129.00",
-    badge: "Featured",
-  },
-];
+import ProductCard from "./ProductCard";
+import { getProducts } from "../../services/productService";
 
 function FeaturedProducts() {
+  const [products, setProducts] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    async function loadFeaturedProducts() {
+      try {
+        const productData = await getProducts();
+
+        setProducts(productData.slice(0, 4));
+      } catch (error) {
+        setProducts([]);
+      } finally {
+        setIsLoading(false);
+      }
+    }
+
+    loadFeaturedProducts();
+  }, []);
+
   return (
     <section className="featured-section" id="featured">
       <SectionContainer>
@@ -34,37 +33,30 @@ function FeaturedProducts() {
             <h2>Made for everyday.</h2>
           </div>
 
-          <a href="/products" className="section-link">
+          <Link to="/products" className="section-link">
             Browse all →
-          </a>
+          </Link>
         </div>
 
-        <div className="featured-grid">
-          {products.map((product) => (
-            <article className="featured-product" key={product.id}>
-              <div className="product-image-placeholder">
-                <span>{product.id}</span>
-                <small>{product.badge}</small>
-              </div>
+        {isLoading && (
+          <div className="featured-loading">
+            <p>Loading featured products...</p>
+          </div>
+        )}
 
-              <div className="product-info">
-                <p>{product.category}</p>
-                <h3>{product.name}</h3>
+        {!isLoading && products.length > 0 && (
+          <div className="featured-products-grid">
+            {products.map((product) => (
+              <ProductCard key={product.id} product={product} />
+            ))}
+          </div>
+        )}
 
-                <div className="product-bottom">
-                  <strong>{product.price}</strong>
-
-                  <button
-                    type="button"
-                    aria-label={`Add ${product.name} to cart`}
-                  >
-                    +
-                  </button>
-                </div>
-              </div>
-            </article>
-          ))}
-        </div>
+        {!isLoading && products.length === 0 && (
+          <div className="featured-loading">
+            <p>Featured products are currently unavailable.</p>
+          </div>
+        )}
       </SectionContainer>
     </section>
   );
