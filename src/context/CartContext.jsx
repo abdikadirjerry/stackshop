@@ -1,10 +1,19 @@
-import { createContext, useContext, useState } from "react";
+import { createContext, useContext, useEffect, useState } from "react";
 
 const CartContext = createContext();
 
 function CartProvider({ children }) {
-  const [cartItems, setCartItems] = useState([]);
+  const [cartItems, setCartItems] = useState(() => {
+    const savedCart = localStorage.getItem("stackshop-cart");
+
+    return savedCart ? JSON.parse(savedCart) : [];
+  });
+
   const [cartMessage, setCartMessage] = useState("");
+
+  useEffect(() => {
+    localStorage.setItem("stackshop-cart", JSON.stringify(cartItems));
+  }, [cartItems]);
 
   function addToCart(product, quantity = 1) {
     setCartItems((currentItems) => {
