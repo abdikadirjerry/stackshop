@@ -5,6 +5,7 @@ import "./Products.css";
 
 function Products() {
   const [products, setProducts] = useState([]);
+  const [searchTerm, setSearchTerm] = useState("");
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState("");
 
@@ -27,6 +28,10 @@ function Products() {
     loadProducts();
   }, []);
 
+  const filteredProducts = products.filter((product) =>
+    product.title.toLowerCase().includes(searchTerm.toLowerCase()),
+  );
+
   return (
     <main className="products-page">
       <section className="products-header">
@@ -39,11 +44,32 @@ function Products() {
             Browse our collection and discover products selected for everyday
             life.
           </p>
+
+          <div className="products-search">
+            <label htmlFor="product-search">Search products</label>
+
+            <input
+              id="product-search"
+              type="search"
+              placeholder="Search by product name..."
+              value={searchTerm}
+              onChange={(event) => setSearchTerm(event.target.value)}
+            />
+          </div>
         </div>
       </section>
 
       <section className="products-section">
         <div className="section-container">
+          {!isLoading && !error && products.length > 0 && (
+            <div className="products-results">
+              <p>
+                {filteredProducts.length}{" "}
+                {filteredProducts.length === 1 ? "product" : "products"} found
+              </p>
+            </div>
+          )}
+
           {isLoading && (
             <div className="products-state">
               <div className="loading-spinner"></div>
@@ -58,16 +84,16 @@ function Products() {
             </div>
           )}
 
-          {!isLoading && !error && products.length === 0 && (
+          {!isLoading && !error && filteredProducts.length === 0 && (
             <div className="products-state">
               <h2>No products found.</h2>
-              <p>There are currently no products available.</p>
+              <p>Try searching for a different product.</p>
             </div>
           )}
 
-          {!isLoading && !error && products.length > 0 && (
+          {!isLoading && !error && filteredProducts.length > 0 && (
             <div className="products-grid">
-              {products.map((product) => (
+              {filteredProducts.map((product) => (
                 <ProductCard key={product.id} product={product} />
               ))}
             </div>
