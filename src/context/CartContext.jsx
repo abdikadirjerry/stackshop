@@ -1,46 +1,14 @@
 import { createContext, useContext, useEffect, useState } from "react";
-
-const CART_STORAGE_KEY = "stackshop-cart";
+import { clearStoredCart, getStoredCart, saveCart } from "../utils/cartStorage";
 
 const CartContext = createContext();
 
 function CartProvider({ children }) {
-  const [cartItems, setCartItems] = useState(() => {
-    try {
-      const savedCart = localStorage.getItem(CART_STORAGE_KEY);
-
-      if (!savedCart) {
-        return [];
-      }
-
-      const parsedCart = JSON.parse(savedCart);
-
-      if (!Array.isArray(parsedCart)) {
-        return [];
-      }
-
-      return parsedCart.filter(
-        (item) =>
-          item &&
-          typeof item.id === "number" &&
-          typeof item.quantity === "number" &&
-          item.quantity > 0 &&
-          typeof item.price === "number",
-      );
-    } catch (error) {
-      localStorage.removeItem(CART_STORAGE_KEY);
-      return [];
-    }
-  });
-
+  const [cartItems, setCartItems] = useState(() => getStoredCart());
   const [cartMessage, setCartMessage] = useState("");
 
   useEffect(() => {
-    try {
-      localStorage.setItem(CART_STORAGE_KEY, JSON.stringify(cartItems));
-    } catch (error) {
-      console.error("Unable to save cart:", error);
-    }
+    saveCart(cartItems);
   }, [cartItems]);
 
   function addToCart(product, quantity = 1) {
@@ -57,6 +25,7 @@ function CartProvider({ children }) {
           item.id === product.id
             ? {
                 ...item,
+                ...product,
                 quantity: newQuantity,
               }
             : item,
@@ -89,6 +58,7 @@ function CartProvider({ children }) {
 
   function clearCart() {
     setCartItems([]);
+    clearStoredCart();
   }
 
   function increaseQuantity(productId) {
