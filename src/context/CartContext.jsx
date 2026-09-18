@@ -15,7 +15,18 @@ function CartProvider({ children }) {
 
       const parsedCart = JSON.parse(savedCart);
 
-      return Array.isArray(parsedCart) ? parsedCart : [];
+      if (!Array.isArray(parsedCart)) {
+        return [];
+      }
+
+      return parsedCart.filter(
+        (item) =>
+          item &&
+          typeof item.id === "number" &&
+          typeof item.quantity === "number" &&
+          item.quantity > 0 &&
+          typeof item.price === "number",
+      );
     } catch (error) {
       localStorage.removeItem(CART_STORAGE_KEY);
       return [];
