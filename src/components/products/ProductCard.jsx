@@ -1,25 +1,52 @@
 import { Link } from "react-router-dom";
 import { useCart } from "../../context/CartContext";
+import { useWishlist } from "../../context/WishlistContext";
 import "./ProductCard.css";
 
 function ProductCard({ product }) {
   const { addToCart } = useCart();
+  const { isInWishlist, toggleWishlist } = useWishlist();
+
+  const productIsInWishlist = isInWishlist(product.id);
 
   function handleAddToCart() {
     addToCart(product);
   }
 
+  function handleWishlistToggle() {
+    toggleWishlist(product);
+  }
+
   return (
     <article className="product-card">
-      <Link to={`/products/${product.id}`} className="product-card-image-link">
-        <div className="product-card-image">
+      <div className="product-card-image">
+        <Link
+          to={`/products/${product.id}`}
+          className="product-card-image-link"
+        >
           <img src={product.thumbnail} alt={product.title} />
 
           {product.discountPercentage > 10 && (
             <span className="product-card-badge">Sale</span>
           )}
-        </div>
-      </Link>
+        </Link>
+
+        <button
+          type="button"
+          className={`product-card-wishlist ${
+            productIsInWishlist ? "active" : ""
+          }`}
+          onClick={handleWishlistToggle}
+          aria-label={
+            productIsInWishlist
+              ? `Remove ${product.title} from wishlist`
+              : `Add ${product.title} to wishlist`
+          }
+          aria-pressed={productIsInWishlist}
+        >
+          {productIsInWishlist ? "♥" : "♡"}
+        </button>
+      </div>
 
       <div className="product-card-content">
         <p className="product-card-category">{product.category}</p>
