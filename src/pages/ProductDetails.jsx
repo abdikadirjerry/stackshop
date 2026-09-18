@@ -2,11 +2,13 @@ import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import { getProductById } from "../services/productService";
 import { useCart } from "../context/CartContext";
+import { useWishlist } from "../context/WishlistContext";
 import "./ProductDetails.css";
 
 function ProductDetails() {
   const { productId } = useParams();
   const { addToCart } = useCart();
+  const { isInWishlist, toggleWishlist } = useWishlist();
 
   const [product, setProduct] = useState(null);
   const [selectedImage, setSelectedImage] = useState("");
@@ -49,6 +51,10 @@ function ProductDetails() {
     addToCart(product, quantity);
   }
 
+  function handleWishlistToggle() {
+    toggleWishlist(product);
+  }
+
   if (isLoading) {
     return (
       <main className="product-details-page">
@@ -75,6 +81,7 @@ function ProductDetails() {
     );
   }
 
+  const productIsInWishlist = isInWishlist(product.id);
   const totalPrice = product.price * quantity;
 
   return (
@@ -110,7 +117,25 @@ function ProductDetails() {
           <div className="product-information">
             <p className="product-category">{product.category}</p>
 
-            <h1>{product.title}</h1>
+            <div className="product-title-row">
+              <h1>{product.title}</h1>
+
+              <button
+                type="button"
+                className={`product-wishlist-button ${
+                  productIsInWishlist ? "active" : ""
+                }`}
+                onClick={handleWishlistToggle}
+                aria-label={
+                  productIsInWishlist
+                    ? "Remove from wishlist"
+                    : "Add to wishlist"
+                }
+                aria-pressed={productIsInWishlist}
+              >
+                {productIsInWishlist ? "♥" : "♡"}
+              </button>
+            </div>
 
             <div className="product-rating">
               <span className="rating-stars">★</span>
