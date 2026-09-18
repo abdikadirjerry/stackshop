@@ -1,12 +1,14 @@
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import Footer from "./components/layout/Footer";
 import Navbar from "./components/layout/Navbar";
+import { useCart } from "./context/CartContext";
+import { useWishlist } from "./context/WishlistContext";
 import Home from "./pages/Home";
 import Products from "./pages/Products";
 import ProductDetails from "./pages/ProductDetails";
 import Wishlist from "./pages/Wishlist";
 import Cart from "./pages/Cart";
-import { useCart } from "./context/CartContext";
+import Checkout from "./pages/Checkout";
 
 function CartNotification() {
   const { cartMessage } = useCart();
@@ -18,6 +20,16 @@ function CartNotification() {
   return <div className="cart-notification">{cartMessage}</div>;
 }
 
+function WishlistNotification() {
+  const { wishlistMessage } = useWishlist();
+
+  if (!wishlistMessage) {
+    return null;
+  }
+
+  return <div className="wishlist-notification">{wishlistMessage}</div>;
+}
+
 function App() {
   return (
     <BrowserRouter>
@@ -26,12 +38,15 @@ function App() {
 
         <CartNotification />
 
+        <WishlistNotification />
+
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/products" element={<Products />} />
           <Route path="/products/:productId" element={<ProductDetails />} />
           <Route path="/wishlist" element={<Wishlist />} />
           <Route path="/cart" element={<Cart />} />
+          <Route path="/checkout" element={<Checkout />} />
         </Routes>
 
         <Footer />
