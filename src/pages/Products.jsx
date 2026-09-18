@@ -179,7 +179,7 @@ function Products() {
             title="No products found."
             message="Try changing your search or filters to find what you're looking for."
             actionLabel="Clear filters"
-            actionTo="/products"
+            onAction={clearFilters}
           />
         )}
 

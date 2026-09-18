@@ -1,6 +1,4 @@
-import { Link } from "react-router-dom";
-
-function EmptyState({ title, message, actionLabel, actionTo }) {
+function EmptyState({ title, message, actionLabel, onAction }) {
   return (
     <div className="empty-state">
       <div className="empty-state-icon">○</div>
@@ -9,10 +7,10 @@ function EmptyState({ title, message, actionLabel, actionTo }) {
 
       <p>{message}</p>
 
-      {actionLabel && actionTo && (
-        <Link to={actionTo} className="empty-state-button">
+      {actionLabel && onAction && (
+        <button type="button" className="empty-state-button" onClick={onAction}>
           {actionLabel}
-        </Link>
+        </button>
       )}
     </div>
   );
