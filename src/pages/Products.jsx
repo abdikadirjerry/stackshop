@@ -1,53 +1,64 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import ProductCard from "../components/products/ProductCard";
+import EmptyState from "../components/common/EmptyState";
+import ErrorState from "../components/common/ErrorState";
+import LoadingState from "../components/common/LoadingState";
 import { getProducts } from "../services/productService";
 import "./Products.css";
+import "../components/common/StateStyles.css";
 
 function Products() {
   const [products, setProducts] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("all");
   const [sortOption, setSortOption] = useState("default");
-  const [isLoading, setIsLoading] = useState(true);
+  const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
-  useEffect(() => {
-    async function loadProducts() {
-      try {
-        setIsLoading(true);
-        setError("");
+  async function loadProducts() {
+    try {
+      setLoading(true);
+      setError("");
 
-        const productData = await getProducts();
+      const data = await getProducts();
 
-        setProducts(productData);
-      } catch (error) {
-        setError("Unable to load products. Please try again.");
-      } finally {
-        setIsLoading(false);
-      }
+      setProducts(data);
+    } catch (requestError) {
+      setError(
+        "We couldn't load the products. Please check your connection and try again.",
+      );
+    } finally {
+      setLoading(false);
     }
+  }
 
+  useEffect(() => {
     loadProducts();
   }, []);
 
-  const categories = [
-    "all",
-    ...new Set(products.map((product) => product.category)),
-  ];
+  const categories = useMemo(() => {
+    const uniqueCategories = [
+      ...new Set(products.map((product) => product.category)),
+    ];
 
-  let filteredProducts = products.filter((product) => {
-    const matchesSearch = product.title
-      .toLowerCase()
-      .includes(searchTerm.toLowerCase());
+    return uniqueCategories.sort();
+  }, [products]);
 
-    const matchesCategory =
-      selectedCategory === "all" || product.category === selectedCategory;
+  const filteredProducts = useMemo(() => {
+    const normalizedSearch = searchTerm.toLowerCase().trim();
 
-    return matchesSearch && matchesCategory;
-  });
+    const filtered = products.filter((product) => {
+      const matchesSearch =
+        product.title.toLowerCase().includes(normalizedSearch) ||
+        product.category.toLowerCase().includes(normalizedSearch);
 
-  filteredProducts = [...filteredProducts].sort(
-    (firstProduct, secondProduct) => {
+      const matchesCategory =
+        selectedCategory === "all" || product.category === selectedCategory;
+
+      return matchesSearch && matchesCategory;
+    });
+
+    return [...filtered].sort((firstProduct, secondProduct) => {
       if (sortOption === "price-low") {
         return firstProduct.price - secondProduct.price;
       }
@@ -60,16 +71,9 @@ function Products() {
         return secondProduct.rating - firstProduct.rating;
       }
 
-      if (sortOption === "name") {
-        return firstProduct.title.localeCompare(secondProduct.title);
-      }
-
       return 0;
-    },
-  );
-
-  const hasActiveFilters =
-    searchTerm !== "" || selectedCategory !== "all" || sortOption !== "default";
+    });
+  }, [products, searchTerm, selectedCategory, sortOption]);
 
   function clearFilters() {
     setSearchTerm("");
@@ -79,31 +83,41 @@ function Products() {
 
   return (
     <main className="products-page">
-      <section className="products-header">
-        <div className="section-container">
-          <p className="products-label">STACKSHOP STORE</p>
+      <div className="section-container">
+        <div className="products-header">
+          <div>
+            <p className="section-label">OUR COLLECTION</p>
 
-          <h1>Explore our products.</h1>
+            <h1>Find something you love.</h1>
 
-          <p>
-            Browse our collection and discover products selected for everyday
-            life.
-          </p>
-
-          <div className="products-search">
-            <label htmlFor="product-search">Search products</label>
-
-            <input
-              id="product-search"
-              type="search"
-              placeholder="Search by product name..."
-              value={searchTerm}
-              onChange={(event) => setSearchTerm(event.target.value)}
-            />
+            <p>
+              Explore our collection and discover products selected for everyday
+              life.
+            </p>
           </div>
 
-          <div className="products-filters">
-            <div className="filter-group">
+          {!loading && !error && (
+            <span className="products-count">
+              {filteredProducts.length} products
+            </span>
+          )}
+        </div>
+
+        {!loading && !error && (
+          <section className="products-filters">
+            <div className="products-search">
+              <label htmlFor="product-search">Search products</label>
+
+              <input
+                id="product-search"
+                type="search"
+                value={searchTerm}
+                onChange={(event) => setSearchTerm(event.target.value)}
+                placeholder="Search by product or category..."
+              />
+            </div>
+
+            <div className="products-filter-group">
               <label htmlFor="category-filter">Category</label>
 
               <select
@@ -111,15 +125,17 @@ function Products() {
                 value={selectedCategory}
                 onChange={(event) => setSelectedCategory(event.target.value)}
               >
+                <option value="all">All categories</option>
+
                 {categories.map((category) => (
                   <option key={category} value={category}>
-                    {category === "all" ? "All categories" : category}
+                    {category}
                   </option>
                 ))}
               </select>
             </div>
 
-            <div className="filter-group">
+            <div className="products-filter-group">
               <label htmlFor="sort-products">Sort by</label>
 
               <select
@@ -127,78 +143,54 @@ function Products() {
                 value={sortOption}
                 onChange={(event) => setSortOption(event.target.value)}
               >
-                <option value="default">Recommended</option>
-                <option value="price-low">Price: Low to High</option>
-                <option value="price-high">Price: High to Low</option>
-                <option value="rating">Highest Rated</option>
-                <option value="name">Name: A to Z</option>
+                <option value="default">Default</option>
+                <option value="price-low">Price: Low to high</option>
+                <option value="price-high">Price: High to low</option>
+                <option value="rating">Highest rated</option>
               </select>
             </div>
-          </div>
 
-          {hasActiveFilters && (
-            <button
-              type="button"
-              className="clear-filters-button"
-              onClick={clearFilters}
-            >
-              Clear filters
-            </button>
-          )}
-        </div>
-      </section>
+            {(searchTerm ||
+              selectedCategory !== "all" ||
+              sortOption !== "default") && (
+              <button
+                type="button"
+                className="clear-filters-button"
+                onClick={clearFilters}
+              >
+                Clear filters
+              </button>
+            )}
+          </section>
+        )}
 
-      <section className="products-section">
-        <div className="section-container">
-          {!isLoading && !error && products.length > 0 && (
-            <div className="products-results">
-              <p>
-                {filteredProducts.length}{" "}
-                {filteredProducts.length === 1 ? "product" : "products"} found
-              </p>
-            </div>
-          )}
+        {loading && <LoadingState message="Loading products..." />}
 
-          {isLoading && (
-            <div className="products-state">
-              <div className="loading-spinner"></div>
-              <p>Loading products...</p>
-            </div>
-          )}
+        {!loading && error && (
+          <ErrorState
+            title="Products unavailable"
+            message={error}
+            onRetry={loadProducts}
+          />
+        )}
 
-          {!isLoading && error && (
-            <div className="products-state error-state">
-              <h2>Something went wrong.</h2>
-              <p>{error}</p>
-            </div>
-          )}
+        {!loading && !error && filteredProducts.length === 0 && (
+          <EmptyState
+            title="No products found."
+            message="Try changing your search or filters to find what you're looking for."
+            actionLabel="Clear filters"
+            actionTo="/products"
+          />
+        )}
 
-          {!isLoading && !error && filteredProducts.length === 0 && (
-            <div className="products-state">
-              <h2>No products found.</h2>
-              <p>Try changing your search or filters.</p>
-
-              {hasActiveFilters && (
-                <button
-                  type="button"
-                  className="empty-state-clear-button"
-                  onClick={clearFilters}
-                >
-                  Clear filters
-                </button>
-              )}
-            </div>
-          )}
-
-          {!isLoading && !error && filteredProducts.length > 0 && (
-            <div className="products-grid">
-              {filteredProducts.map((product) => (
-                <ProductCard key={product.id} product={product} />
-              ))}
-            </div>
-          )}
-        </div>
-      </section>
+        {!loading && !error && filteredProducts.length > 0 && (
+          <section className="products-grid">
+            {filteredProducts.map((product) => (
+              <ProductCard key={product.id} product={product} />
+            ))}
+          </section>
+        )}
+      </div>
     </main>
   );
 }
