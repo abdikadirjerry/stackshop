@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { Link, Navigate, useNavigate } from "react-router-dom";
 import { useCart } from "../context/CartContext";
 import "./Checkout.css";
@@ -17,6 +17,7 @@ const initialFormData = {
 function Checkout() {
   const navigate = useNavigate();
   const { cartItems, cartTotal } = useCart();
+  const firstInvalidField = useRef(null);
 
   const [formData, setFormData] = useState(initialFormData);
   const [paymentMethod, setPaymentMethod] = useState("card");
@@ -82,13 +83,21 @@ function Checkout() {
 
     setErrors(newErrors);
 
-    return Object.keys(newErrors).length === 0;
+    return newErrors;
   }
 
   function handleSubmit(event) {
     event.preventDefault();
 
-    if (!validateForm()) {
+    const validationErrors = validateForm();
+
+    if (Object.keys(validationErrors).length > 0) {
+      const firstErrorField = Object.keys(validationErrors)[0];
+
+      firstInvalidField.current = document.getElementById(firstErrorField);
+
+      firstInvalidField.current?.focus();
+
       return;
     }
 
