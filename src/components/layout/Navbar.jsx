@@ -1,9 +1,11 @@
-import { NavLink, Link } from "react-router-dom";
+import { Link, NavLink } from "react-router-dom";
 import { useCart } from "../../context/CartContext";
+import { useWishlist } from "../../context/WishlistContext";
 import "./Navbar.css";
 
 function Navbar() {
   const { cartCount } = useCart();
+  const { wishlistCount } = useWishlist();
 
   return (
     <header className="navbar">
@@ -38,6 +40,9 @@ function Navbar() {
             }
           >
             Wishlist
+            {wishlistCount > 0 && (
+              <span className="navbar-wishlist-count">{wishlistCount}</span>
+            )}
           </NavLink>
         </nav>
 
