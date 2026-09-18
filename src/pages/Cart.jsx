@@ -145,9 +145,9 @@ function Cart() {
               <strong>${orderTotal.toFixed(2)}</strong>
             </div>
 
-            <button type="button" className="cart-checkout-button">
+            <Link to="/checkout" className="cart-checkout-button">
               Proceed to checkout
-            </button>
+            </Link>
 
             <Link to="/products" className="continue-shopping-link">
               ← Continue shopping
