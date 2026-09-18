@@ -1,6 +1,7 @@
 import { useRef, useState } from "react";
 import { Link, Navigate, useNavigate } from "react-router-dom";
 import { useCart } from "../context/CartContext";
+import { useOrder } from "../context/OrderContext";
 import "./Checkout.css";
 
 const initialFormData = {
@@ -16,7 +17,9 @@ const initialFormData = {
 
 function Checkout() {
   const navigate = useNavigate();
-  const { cartItems, cartTotal } = useCart();
+  const { cartItems, cartTotal, clearCart } = useCart();
+  const { createOrder } = useOrder();
+
   const firstInvalidField = useRef(null);
 
   const [formData, setFormData] = useState(initialFormData);
@@ -101,14 +104,22 @@ function Checkout() {
       return;
     }
 
+    const order = createOrder({
+      customer: {
+        ...formData,
+      },
+      paymentMethod,
+      items: cartItems,
+      subtotal: cartTotal,
+      shipping: shippingCost,
+      total: orderTotal,
+    });
+
+    clearCart();
+
     navigate("/order-confirmation", {
       state: {
-        customer: formData,
-        paymentMethod,
-        items: cartItems,
-        subtotal: cartTotal,
-        shipping: shippingCost,
-        total: orderTotal,
+        order,
       },
     });
   }
