@@ -1,7 +1,8 @@
 import { useRef, useState } from "react";
 import { Link, Navigate, useNavigate } from "react-router-dom";
 import { useCart } from "../context/CartContext";
-import { useOrder } from "../context/OrderContext";
+import { SHIPPING_COST } from "../utils/storeConstants";
+import { formatCurrency } from "../utils/formatCurrency";
 import "./Checkout.css";
 
 const initialFormData = {
@@ -17,16 +18,14 @@ const initialFormData = {
 
 function Checkout() {
   const navigate = useNavigate();
-  const { cartItems, cartTotal, clearCart } = useCart();
-  const { createOrder } = useOrder();
-
+  const { cartItems, cartTotal } = useCart();
   const firstInvalidField = useRef(null);
 
   const [formData, setFormData] = useState(initialFormData);
   const [paymentMethod, setPaymentMethod] = useState("card");
   const [errors, setErrors] = useState({});
 
-  const shippingCost = 10;
+  const shippingCost = cartItems.length > 0 ? SHIPPING_COST : 0;
   const orderTotal = cartTotal + shippingCost;
 
   if (cartItems.length === 0) {
@@ -104,22 +103,14 @@ function Checkout() {
       return;
     }
 
-    const order = createOrder({
-      customer: {
-        ...formData,
-      },
-      paymentMethod,
-      items: cartItems,
-      subtotal: cartTotal,
-      shipping: shippingCost,
-      total: orderTotal,
-    });
-
-    clearCart();
-
     navigate("/order-confirmation", {
       state: {
-        order,
+        customer: formData,
+        paymentMethod,
+        items: cartItems,
+        subtotal: cartTotal,
+        shipping: shippingCost,
+        total: orderTotal,
       },
     });
   }
@@ -357,7 +348,7 @@ function Checkout() {
             </section>
 
             <button type="submit" className="checkout-submit-button">
-              Place order · ${orderTotal.toFixed(2)}
+              Place order · {formatCurrency(orderTotal)}
             </button>
           </div>
 
@@ -378,12 +369,13 @@ function Checkout() {
 
                   <div>
                     <h3>{item.title}</h3>
+
                     <p>
-                      ${item.price.toFixed(2)} × {item.quantity}
+                      {formatCurrency(item.price)} × {item.quantity}
                     </p>
                   </div>
 
-                  <strong>${(item.price * item.quantity).toFixed(2)}</strong>
+                  <strong>{formatCurrency(item.price * item.quantity)}</strong>
                 </div>
               ))}
             </div>
@@ -392,17 +384,17 @@ function Checkout() {
 
             <div className="checkout-summary-row">
               <span>Subtotal</span>
-              <strong>${cartTotal.toFixed(2)}</strong>
+              <strong>{formatCurrency(cartTotal)}</strong>
             </div>
 
             <div className="checkout-summary-row">
               <span>Shipping</span>
-              <strong>${shippingCost.toFixed(2)}</strong>
+              <strong>{formatCurrency(shippingCost)}</strong>
             </div>
 
             <div className="checkout-summary-total">
               <span>Total</span>
-              <strong>${orderTotal.toFixed(2)}</strong>
+              <strong>{formatCurrency(orderTotal)}</strong>
             </div>
 
             <div className="checkout-security">
