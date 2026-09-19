@@ -194,7 +194,6 @@
 
 .confirmation-total-row {
   display: flex;
-  align-items: center;
   justify-content: space-between;
   margin-bottom: 13px;
 }
@@ -217,7 +216,6 @@
 
 .confirmation-total-final {
   display: flex;
-  align-items: center;
   justify-content: space-between;
 }
 
@@ -248,10 +246,6 @@
   justify-content: center;
   font-size: 13px;
   font-weight: 700;
-  text-decoration: none;
-  transition:
-    background-color 0.2s ease,
-    border-color 0.2s ease;
 }
 
 .confirmation-primary-button {
