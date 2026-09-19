@@ -51,7 +51,10 @@ function ProductCard({ product }) {
       <div className="product-card-content">
         <p className="product-card-category">{product.category}</p>
 
-        <Link to={`/products/${product.id}`}>
+        <Link
+          to={`/products/${product.id}`}
+          className="product-card-title-link"
+        >
           <h3 className="product-card-title">{product.title}</h3>
         </Link>
 

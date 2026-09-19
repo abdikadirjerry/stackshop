@@ -2,26 +2,34 @@ import { Link } from "react-router-dom";
 import "./Footer.css";
 
 function Footer() {
+  function handleNewsletterSubmit(event) {
+    event.preventDefault();
+  }
+
   return (
     <footer className="footer">
       <div className="footer-newsletter">
         <div className="section-container">
           <div className="newsletter-content">
-            <div>
+            <div className="newsletter-text">
               <p className="section-label">STAY IN THE LOOP</p>
+
               <h2>Get the latest from StackShop.</h2>
+
               <p>
                 New products, special offers, and useful updates delivered to
                 your inbox.
               </p>
             </div>
 
-            <form className="newsletter-form">
+            <form className="newsletter-form" onSubmit={handleNewsletterSubmit}>
               <input
                 type="email"
                 placeholder="Enter your email"
                 aria-label="Email address"
+                required
               />
+
               <button type="submit">Subscribe</button>
             </form>
           </div>
@@ -44,6 +52,7 @@ function Footer() {
 
             <div className="footer-column">
               <h3>Shop</h3>
+
               <Link to="/products">All Products</Link>
               <Link to="/products">Categories</Link>
               <Link to="/wishlist">Wishlist</Link>
@@ -52,6 +61,7 @@ function Footer() {
 
             <div className="footer-column">
               <h3>Company</h3>
+
               <a href="/">About</a>
               <a href="/">Contact</a>
               <a href="/">Privacy</a>
@@ -60,6 +70,7 @@ function Footer() {
 
             <div className="footer-column">
               <h3>Follow</h3>
+
               <a href="/">Instagram</a>
               <a href="/">Twitter</a>
               <a href="/">Facebook</a>
