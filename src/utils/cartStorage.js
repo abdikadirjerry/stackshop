@@ -1,4 +1,4 @@
-const CART_STORAGE_KEY = "stackshop-cart";
+import { CART_STORAGE_KEY } from "./storeConstants";
 
 export function getStoredCart() {
   try {
@@ -40,6 +40,6 @@ export function clearStoredCart() {
   try {
     localStorage.removeItem(CART_STORAGE_KEY);
   } catch (error) {
-    console.error("Unable to clear stored cart:", error);
+    console.error("Unable to clear cart:", error);
   }
 }
