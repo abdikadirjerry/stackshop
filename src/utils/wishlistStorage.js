@@ -1,4 +1,4 @@
-const WISHLIST_STORAGE_KEY = "stackshop-wishlist";
+import { WISHLIST_STORAGE_KEY } from "./storeConstants";
 
 export function getStoredWishlist() {
   try {
