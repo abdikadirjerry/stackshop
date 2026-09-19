@@ -1,5 +1,7 @@
 import { Link } from "react-router-dom";
 import { useCart } from "../context/CartContext";
+import { SHIPPING_COST } from "../utils/storeConstants";
+import { formatCurrency } from "../utils/formatCurrency";
 import "./Cart.css";
 
 function Cart() {
@@ -12,7 +14,7 @@ function Cart() {
     clearCart,
   } = useCart();
 
-  const shippingCost = cartItems.length > 0 ? 10 : 0;
+  const shippingCost = cartItems.length > 0 ? SHIPPING_COST : 0;
   const orderTotal = cartTotal + shippingCost;
 
   if (cartItems.length === 0) {
@@ -44,7 +46,9 @@ function Cart() {
         <div className="cart-header">
           <div>
             <p className="section-label">SHOPPING CART</p>
+
             <h1>Your cart</h1>
+
             <p>Review your items before continuing to checkout.</p>
           </div>
 
@@ -74,7 +78,7 @@ function Cart() {
                     </Link>
 
                     <span className="cart-item-price">
-                      ${item.price.toFixed(2)}
+                      {formatCurrency(item.price)}
                     </span>
                   </div>
 
@@ -117,7 +121,7 @@ function Cart() {
                 </div>
 
                 <div className="cart-item-total">
-                  ${(item.price * item.quantity).toFixed(2)}
+                  {formatCurrency(item.price * item.quantity)}
                 </div>
               </article>
             ))}
@@ -130,19 +134,19 @@ function Cart() {
 
             <div className="cart-summary-row">
               <span>Subtotal</span>
-              <strong>${cartTotal.toFixed(2)}</strong>
+              <strong>{formatCurrency(cartTotal)}</strong>
             </div>
 
             <div className="cart-summary-row">
               <span>Shipping</span>
-              <strong>${shippingCost.toFixed(2)}</strong>
+              <strong>{formatCurrency(shippingCost)}</strong>
             </div>
 
             <div className="cart-summary-divider"></div>
 
             <div className="cart-summary-total">
               <span>Total</span>
-              <strong>${orderTotal.toFixed(2)}</strong>
+              <strong>{formatCurrency(orderTotal)}</strong>
             </div>
 
             <Link to="/checkout" className="cart-checkout-button">
